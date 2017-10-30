@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, integer.toString());
             }
         };
-//        observable.subscribe(consumer);
+        observable.subscribe(consumer);
         observable.subscribeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -46,5 +46,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .subscribe(consumer);
+        Observable<Integer> myObservable = Observable.just(Log.d(TAG, "hello world"));
     }
 }
