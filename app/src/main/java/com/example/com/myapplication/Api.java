@@ -4,6 +4,8 @@ import com.example.com.myapplication.entity.LoginRequest;
 import com.example.com.myapplication.entity.LoginResponse;
 import com.example.com.myapplication.entity.RegisterRequest;
 import com.example.com.myapplication.entity.RegisterResponse;
+import com.example.com.myapplication.entity.UserExtraInfoRequest;
+import com.example.com.myapplication.entity.UserExtraInfoResponse;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;
@@ -25,4 +27,7 @@ public interface Api {
 
     @GET("v2/movie/top250")
     Observable<Response<ResponseBody>> getTop250(@Query("start") int start, @Query("count") int count);
+
+    @GET
+    Observable<UserExtraInfoResponse> getUserExtraInfo(@Body UserExtraInfoRequest request);
 }
