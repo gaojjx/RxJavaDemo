@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -20,32 +22,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Observable<Integer> observable = Observable.create(new ObservableOnSubscribe<Integer>() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                Log.d(TAG, "Observable thread is: " + Thread.currentThread().getName());
-                e.onNext(1);
+                for (int i = 0; ; i++) {
+                    e.onNext(i);
+                    Thread.sleep(2000);
+                }
             }
-        });
-
-        Consumer<Integer> consumer = new Consumer<Integer>() {
-            @Override
-            public void accept(Integer integer) throws Exception {
-                Log.d(TAG, "consumer Thread is: " + Thread.currentThread().getName());
-                Log.d(TAG, integer.toString());
-            }
-        };
-        observable.subscribe(consumer);
-        observable.subscribeOn(Schedulers.newThread())
-                .subscribeOn(Schedulers.io())
+        }).subscribeOn(Schedulers.io())
+                .sample(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Consumer<Integer>() {
+                .subscribe(new Consumer<Integer>() {
                     @Override
                     public void accept(Integer integer) throws Exception {
-                        Log.d(TAG, "After mainThread, this Thread is:" + Thread.currentThread().getName());
+                        Log.d(TAG, "accept: " + integer);
                     }
-                })
-                .subscribe(consumer);
-        Observable<Integer> myObservable = Observable.just(Log.d(TAG, "hello world"));
+                });
     }
 }

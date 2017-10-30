@@ -9,6 +9,8 @@ import com.example.com.myapplication.entity.UserExtraInfoRequest;
 import com.example.com.myapplication.entity.UserExtraInfoResponse;
 import com.example.com.myapplication.entity.UserInfo;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -139,9 +141,9 @@ public class ChapterFour {
     public static void practice() {
         final Api api = RetrofitProvider.get().create(Api.class);
         Observable<UserExtraInfoResponse> observable1 =
-                api.getUserExtraInfo(new UserExtraInfoRequest()).subscribeOn(Schedulers.io());
+                api.getUserExtraInfo(new UserExtraInfoRequest()).subscribeOn(Schedulers.io()).sample(2, TimeUnit.SECONDS);
         Observable<UserExtraInfoResponse> observable2 =
-                api.getUserExtraInfo(new UserExtraInfoRequest()).subscribeOn(Schedulers.io());
+                api.getUserExtraInfo(new UserExtraInfoRequest()).subscribeOn(Schedulers.io()).sample(2, TimeUnit.SECONDS);
         Observable.zip(observable1, observable2, new BiFunction<UserExtraInfoResponse, UserExtraInfoResponse, UserInfo>() {
             @Override
             public UserInfo apply(UserExtraInfoResponse userExtraInfoResponse, UserExtraInfoResponse userExtraInfoResponse2) throws Exception {
